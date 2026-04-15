@@ -1,13 +1,17 @@
 #!/usr/bin/env node
 import { program } from 'commander';
+import { createRequire } from 'module';
 import { installCommand } from '../src/commands/install.js';
 import { addProjectCommand } from '../src/commands/add-project.js';
 import { statusCommand } from '../src/commands/status.js';
 
+const require = createRequire(import.meta.url);
+const { version } = require('../package.json');
+
 program
   .name('claude-memory')
   .description('Zero-infrastructure persistent memory for Claude Code')
-  .version('1.0.0');
+  .version(version);
 
 program
   .command('install')
