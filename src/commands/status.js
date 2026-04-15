@@ -1,3 +1,75 @@
+import chalk from 'chalk';
+import fs from 'fs-extra';
+import path from 'path';
+import { getiCloudPath, getMemoryPaths } from '../utils/icloud.js';
+import { checkSymlink, getDotClaudePath } from '../utils/symlinks.js';
+
 export async function statusCommand() {
-  console.log('status — coming soon');
+  console.log(chalk.bold('\nclaude-memory status\n'));
+
+  let allOk = true;
+
+  // 1. iCloud
+  const icloud = getiCloudPath();
+  if (icloud) {
+    console.log(chalk.green('✓ iCloud Drive'), chalk.dim(icloud));
+  } else {
+    console.log(chalk.red('✗ iCloud Drive not found'));
+    allOk = false;
+  }
+
+  // 2. Folder structure
+  if (icloud) {
+    const paths = getMemoryPaths();
+    if (!paths) {
+      console.log(chalk.red('✗ Failed to resolve memory paths'));
+      allOk = false;
+    } else {
+      const folders = {
+        'claude-memory/': paths.claudeMemory,
+        'claude-memory/projects/': paths.projects,
+        'claude-memory/system/': paths.system,
+        'commands/': paths.commands,
+      };
+      for (const [label, folder] of Object.entries(folders)) {
+        if (fs.existsSync(folder)) {
+          console.log(chalk.green('✓'), label);
+        } else {
+          console.log(chalk.red('✗'), label, chalk.dim('(missing — run install)'));
+          allOk = false;
+        }
+      }
+    }
+  }
+
+  // 3. Symlinks
+  console.log('');
+  if (icloud) {
+    const paths = getMemoryPaths();
+    const dotClaude = getDotClaudePath();
+    if (paths) {
+      const symlinks = [
+        ['~/.claude/CLAUDE.md', path.join(dotClaude, 'CLAUDE.md'), path.join(paths.system, 'CLAUDE.md')],
+        ['~/.claude/commands/', path.join(dotClaude, 'commands'), paths.commands],
+        ['~/.claude/settings.json', path.join(dotClaude, 'settings.json'), path.join(paths.system, 'settings.json')],
+      ];
+      for (const [label, link, target] of symlinks) {
+        const result = checkSymlink(link, target);
+        if (result.ok) {
+          console.log(chalk.green('✓'), label, chalk.dim('→ iCloud'));
+        } else {
+          console.log(chalk.red('✗'), label, chalk.dim(`(${result.reason})`));
+          allOk = false;
+        }
+      }
+    }
+  }
+
+  // Summary
+  console.log('');
+  if (allOk) {
+    console.log(chalk.bold.green('All good — claude-memory is installed and healthy.\n'));
+  } else {
+    console.log(chalk.bold.yellow('Issues found. Run npx claude-memory install to fix.\n'));
+  }
 }
