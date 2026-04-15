@@ -1,5 +1,5 @@
 {
-  "name": "claude-memory",
+  "name": "claude-memory-kit",
   "version": "1.0.0",
   "description": "Zero-infrastructure persistent memory for Claude Code. iCloud-synced, human-readable, no databases.",
   "type": "module",
