@@ -19,6 +19,6 @@ On the FIRST message of every session, before anything else:
 
 ## Session End (/wrap)
 
-1. Update `claude-memory/projects/{{PROJECT_SLUG}}.md` — new session entry at top of History, update Current State if anything changed.
+1. Update `{{ICLOUD_PATH}}/Claude/claude-memory/projects/{{PROJECT_SLUG}}.md` — new session entry at top of History, update Current State if anything changed.
 2. Prepend one-liner to `CHANGELOG.md` in this folder: `## YYYY-MM-DD — <headline>`
 3. Update `claude-memory/_index.md` — Last Touched date for this project.

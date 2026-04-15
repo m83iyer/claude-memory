@@ -20,7 +20,7 @@ On the FIRST message of every session, before anything else:
 
 When the session ends or /wrap is called:
 1. Update `claude-memory/projects/<project>.md` — new session entry at top of History
-2. Prepend one-liner to `CHANGELOG.md` in project folder (if it exists)
+2. If `CHANGELOG.md` exists in the project folder, prepend: `## YYYY-MM-DD — <headline>`. Create it if you want a running log.
 3. Update `claude-memory/_index.md` — Last Touched date
 
 ## Rules

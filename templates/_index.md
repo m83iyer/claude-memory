@@ -8,7 +8,7 @@
 
 | Project | Priority | Status | Last Touched | File |
 |---------|----------|--------|-------------|------|
-| Example Project | High | In progress | {{DATE}} | projects/example.md |
+| — | — | — | — | — |
 
 ---
 
