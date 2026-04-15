@@ -8,10 +8,18 @@ import { writeTemplate } from '../utils/templates.js';
 export async function addProjectCommand(options) {
   const cwd = process.cwd();
   const projectName = path.basename(cwd);
-  const projectSlug = projectName.toLowerCase().replace(/\s+/g, '-');
+  const projectSlug = projectName
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
   const icloud = getiCloudPath();
   const date = new Date().toISOString().split('T')[0];
   const machineName = os.hostname().replace('.local', '');
+
+  if (!projectName) {
+    console.error(chalk.red('✗ Cannot detect project name. Make sure you are running this from inside a project folder.'));
+    process.exit(1);
+  }
 
   console.log(chalk.bold(`\nclaude-memory add-project${options.full ? ' --full' : ''}\n`));
   console.log(`Project: ${chalk.cyan(projectName)}`);
@@ -81,13 +89,19 @@ export async function addProjectCommand(options) {
       ['full/agents/reviewer.md', path.join(dotClaude, 'agents', 'reviewer.md')],
     ];
 
+    let hookWritten = false;
     for (const [template, dest] of fullFiles) {
       const result = await writeTemplate(template, dest, templateVars);
       logResult(path.relative(cwd, dest), result);
+      if (template === 'full/hooks/validate-bash.sh' && result.status === 'written') {
+        hookWritten = true;
+      }
     }
 
-    // Make hook executable
-    await fs.chmod(path.join(dotClaude, 'hooks', 'validate-bash.sh'), '755');
+    // Make hook executable (only if freshly written)
+    if (hookWritten) {
+      await fs.chmod(path.join(dotClaude, 'hooks', 'validate-bash.sh'), '755');
+    }
   }
 
   // Done
