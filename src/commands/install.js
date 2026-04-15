@@ -20,6 +20,10 @@ export async function installCommand() {
 
   // 2. Create folder structure
   const paths = getMemoryPaths();
+  if (!paths) {
+    console.error(chalk.red('✗ Failed to resolve memory paths.'));
+    process.exit(1);
+  }
   const folders = [paths.claudeMemory, paths.projects, paths.system, paths.commands];
   for (const folder of folders) {
     await fs.ensureDir(folder);
@@ -68,8 +72,11 @@ export async function installCommand() {
 
   for (const [target, link] of symlinks) {
     const result = await createSymlink(target, link);
-    const icon = result.status === 'created' ? chalk.green('✓') : chalk.yellow('~');
-    console.log(`${icon} ~/.claude/${path.basename(link)} → iCloud (${result.reason})`);
+    if (result.status === 'created') {
+      console.log(chalk.green(`✓ ~/.claude/${path.basename(link)} → iCloud`));
+    } else {
+      console.log(chalk.yellow(`~ ~/.claude/${path.basename(link)} — skipped (${result.reason})`));
+    }
   }
 
   // Done
