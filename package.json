@@ -9,6 +9,7 @@
     "type": "git",
     "url": "https://github.com/m83iyer/claude-memory.git"
   },
+  "author": "m83iyer",
   "license": "MIT",
   "bin": {
     "claude-memory": "./bin/claude-memory.js"

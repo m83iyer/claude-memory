@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import fs from 'fs-extra';
 import path from 'path';
 import os from 'os';
-import { getiCloudPath } from '../utils/icloud.js';
+import { getiCloudPath, getMemoryPaths } from '../utils/icloud.js';
 import { writeTemplate } from '../utils/templates.js';
 
 export async function addProjectCommand(options) {
@@ -18,6 +18,11 @@ export async function addProjectCommand(options) {
 
   if (!projectName) {
     console.error(chalk.red('✗ Cannot detect project name. Make sure you are running this from inside a project folder.'));
+    process.exit(1);
+  }
+
+  if (!projectSlug) {
+    console.error(chalk.red(`✗ Project name "${projectName}" produces an empty slug. Rename the folder to include at least one letter or number.`));
     process.exit(1);
   }
 
@@ -71,8 +76,8 @@ export async function addProjectCommand(options) {
   }
 
   // 4. Create project memory file in iCloud
-  const memoryDir = path.join(icloud, 'Claude', 'claude-memory', 'projects');
-  const memoryFile = path.join(memoryDir, `${projectSlug}.md`);
+  const paths = getMemoryPaths();
+  const memoryFile = path.join(paths ? paths.projects : path.join(icloud, 'Claude', 'claude-memory', 'projects'), `${projectSlug}.md`);
   const memoryResult = await writeTemplate('project-memory.md', memoryFile, templateVars);
   logResult(`claude-memory/projects/${projectSlug}.md`, memoryResult);
 

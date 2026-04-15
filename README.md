@@ -115,7 +115,7 @@ my-project/
 | Cross-device | ✅ iCloud | ❌ Local only | ❌ Self-hosted |
 | Human readable | ✅ Markdown | ❌ Database | ❌ Database |
 | Memory quality | Curated (/wrap) | Auto (captures noise) | Auto |
-| Setup | `npx install` | `npx install` | Docker stack |
+| Setup | `npx claude-memory install` | `npx install` | Docker stack |
 
 ---
 
