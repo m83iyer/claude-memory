@@ -9,17 +9,20 @@ import os from 'os';
  */
 export async function createSymlink(targetPath, linkPath) {
   if (fs.existsSync(linkPath)) {
+    let isSymlink = false;
     try {
       const existing = fs.readlinkSync(linkPath);
       if (existing === targetPath) {
         return { status: 'skipped', reason: 'already correct' };
       }
+      isSymlink = true;
     } catch (e) {
-      // Not a symlink — back it up
+      // Not a symlink — it's a real file
     }
     const backup = `${linkPath}.backup-${Date.now()}`;
     await fs.move(linkPath, backup);
-    return await _createLink(targetPath, linkPath, `backed up existing file`);
+    const reason = isSymlink ? 'backed up existing symlink' : 'backed up existing file';
+    return await _createLink(targetPath, linkPath, reason);
   }
   return await _createLink(targetPath, linkPath, 'created');
 }

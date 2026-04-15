@@ -12,7 +12,12 @@ const TEMPLATES_DIR = path.join(__dirname, '..', '..', 'templates');
  */
 export async function renderTemplate(templatePath, vars = {}) {
   const fullPath = path.join(TEMPLATES_DIR, templatePath);
-  let content = await fs.readFile(fullPath, 'utf8');
+  let content;
+  try {
+    content = await fs.readFile(fullPath, 'utf8');
+  } catch (e) {
+    throw new Error(`Template not found: ${templatePath} (looked in ${fullPath})`);
+  }
   for (const [key, value] of Object.entries(vars)) {
     content = content.replaceAll(`{{${key}}}`, value);
   }
