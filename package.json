@@ -4,6 +4,11 @@
   "description": "Zero-infrastructure persistent memory for Claude Code. iCloud-synced, human-readable, no databases.",
   "type": "module",
   "keywords": ["claude", "claude-code", "memory", "ai", "icloud", "productivity"],
+  "homepage": "https://github.com/m83iyer/claude-memory",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/m83iyer/claude-memory.git"
+  },
   "license": "MIT",
   "bin": {
     "claude-memory": "./bin/claude-memory.js"
